@@ -28,27 +28,41 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="201dp"/>
 
-    <Button
-        android:id="@+id/btn"
+    <TextView
+        android:id="@+id/location_text"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="92dp"
-        android:text="Mulai Track Lokasi
-"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="127dp" />
-
-    <Button
-        android:id="@+id/lokasi"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_marginBottom="169dp"
+        android:text="Tap button dibawah sis kalo pengen dapet lokasimu:)"
+        android:textStyle="bold" />
+    <LinearLayout
+        android:id="@+id/lin"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="33dp"
-        android:text="Pilih Lokasi"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="127dp" />
 
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textMap"
+            android:layout_gravity="left"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:text="Track Lokasi"
+             />
+        <Button
+            android:id="@+id/lokasi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_margin="5dp"
+            android:layout_marginTop="15dp"
+            android:layout_weight="1"
+            android:text="Pilih Lokasi"/>
+           </LinearLayout>
 </RelativeLayout>

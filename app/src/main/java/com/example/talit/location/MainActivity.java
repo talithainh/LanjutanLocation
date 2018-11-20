@@ -30,7 +30,6 @@ import com.google.android.gms.location.places.PlaceLikelihoodBufferResponse;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 
@@ -49,6 +48,29 @@ public class MainActivity extends AppCompatActivity implements DapatkanAlamatTas
     private PlaceDetectionClient mPlaceDetectionClient;
     private  String mLastPlaceName;
 
+    private static String NAME ="" ;//static variabel untuk digunakan sebagai instance save agar saat berubah rotasi tidak hilang data sebelumnya
+    private static String ADDRESS = "";//static variabel untuk digunakan sebagai instance save agar saat berubah rotasi tidak hilang data sebelumnya
+    private static int IMG=-1;//static variabel untuk digunakan sebagai instance save agar saat berubah rotasi tidak hilang data sebelumnya
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) { //function digunakan agar data dari alamat sebelumnya disimpan ke dalaman Save Instance State
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString("placeName",NAME);
+        savedInstanceState.putString("placeAddress",ADDRESS);
+        savedInstanceState.putInt("placeImage",IMG);
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) { // function digunakn saat merestore data yang ada dalam Instancestate kedalam object yandg ditentukan
+        super.onRestoreInstanceState(savedInstanceState);
+        if(savedInstanceState.getString("placeName")=="")
+        {
+            mLocationTextView.setText("Tekan Button dibawah ini untuk mendapatkan lokasi anda");
+        }
+        else
+        {
+            mLocationTextView.setText(getString(R.string.alamat_text,savedInstanceState.getString("placeName"),savedInstanceState.getString("placeAddress"), System.currentTimeMillis()));
+            mAndroidImageView.setImageResource(savedInstanceState.getInt("placeImage"));
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,9 +206,13 @@ public class MainActivity extends AppCompatActivity implements DapatkanAlamatTas
                         place.getAddress(),
                         System.currentTimeMillis())
         );
+        NAME = place.getName().toString(); // masukan data data tersebut kedalam statid variabel untuk di saveinstance agar tidak hilang
+        ADDRESS = place.getAddress().toString();// masukan data data tersebut kedalam statid variabel untuk di saveinstance agar tidak hilang
+        IMG= setTipeLokasi(place);// masukan data data tersebut kedalam statid variabel untuk di saveinstance agar tidak hilang
+        mAndroidImageView.setImageResource(IMG);
 
     } else{
-        mLocationTextView.setText("belum pilih lokasi bebs");
+        mLocationTextView.setText("belum pilih lokasi ");
 
     }
 }
@@ -229,13 +255,13 @@ public class MainActivity extends AppCompatActivity implements DapatkanAlamatTas
                             Place currentPlace = null;
 
                             //cek tempat yg dihasilkan adalah tmpt yng plg mendekati
-                            for (PlaceLikelihood placeLikelihood : likelyPlaces){
+                            for (PlaceLikelihood placeLikelihood : likelyPlaces) {
 
-                                    if(maxLikelihood < placeLikelihood.getLikelihood()){
+                                if (maxLikelihood < placeLikelihood.getLikelihood()) {
                                     maxLikelihood = placeLikelihood.getLikelihood();
                                     currentPlace = placeLikelihood.getPlace();
                                 }
-                                }
+                            }
 
                                 if (currentPlace !=null) {
                                     mLocationTextView.setText(
@@ -245,6 +271,11 @@ public class MainActivity extends AppCompatActivity implements DapatkanAlamatTas
                                     );
                                     //mengubah icon berdasar tipenya lokasi
                                     setTipeLokasi(currentPlace);
+                                    
+//                                    NAME = placeLikelihood.getPlace().getName().toString();// masukan data data tersebut kedalam statid variabel untuk di saveinstance agar tidak hilang
+//                                    ADDRESS = placeLikelihood.getPlace().getAddress().toString();// masukan data data tersebut kedalam statid variabel untuk di saveinstance agar tidak hilang
+//                                    IMG = setTipeLokasi(placeLikelihood.getPlace());// masukan data data tersebut kedalam statid variabel untuk di saveinstance agar tidak hilang
+//                                    mAndroidImageView.setImageResource(IMG);
                                 }
                                     likelyPlaces.release();
                             } else {
@@ -296,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements DapatkanAlamatTas
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); // untuk memilih akurasi tinggi menggunakan GPS
         return locationRequest;
     }
-    private void setTipeLokasi(Place currentPlace){
+    private int setTipeLokasi(Place currentPlace){
         int drawableID = -1;
         for(Integer placeType : currentPlace.getPlaceTypes()){
             switch (placeType){
@@ -318,5 +349,6 @@ public class MainActivity extends AppCompatActivity implements DapatkanAlamatTas
             drawableID = R.drawable.unknown;
         }
         mAndroidImageView.setImageResource(drawableID);
+        return drawableID;
     }
 }
